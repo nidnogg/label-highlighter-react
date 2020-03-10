@@ -1,5 +1,6 @@
 # label-highlighter-react
 
+Text content generated through [TalkToTransformer](https://talktotransformer.com/)
 ## Usage
 
 ```npm run dev``` for development
