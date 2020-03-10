@@ -22,28 +22,40 @@ const Labeller = () => {
   const [listLabels, setListLabels] = useState([]);
   const [value, setValue] = useState(0);
 
-  const addItem = e => {
-    e.preventDefault();
-    console.log("onSubmit called, current listLabels state is: " + listLabels);
-    return;
+  const handleSubmit = event => {
+    console.log("onSubmit called, current value state is: " + value);
+    setListLabels( listLabels.concat(value) );
+    
+    event.preventDefault();
+    console.log("listLabels:" + listLabels);
   }
 
-  const handleInput = e => {
-    //setListLabels(listLabels.concat(e.target.value)); 
-    //setListLabels([e.target.value, ]);
-    return;
+  const handleChange = event => {
+    setValue(event.target.value);
   }
+
+  const renderLabels = listLabels.map((label) => 
+      <li className="label-entry">{label}</li>
+      );
+    
+
+
+  useEffect(() => {
+    //renderLabels();
+  });
 
   return (
     <section className="labeller">
       <h2>labeller</h2>
-      <form className="label-table" onSubmit={addItem}>
+      <form className="label-table" onSubmit={handleSubmit}>
         {/* */}
         <ul>
             <li className="label-entry label-entry-initial">
-              <input type="text" placeholder="Add new Label" onChange={handleInput}/>
-                <button type="submit">+</button>
+              <input type="text" placeholder="Add new Label" onChange={handleChange}/>
+              <button type="submit">+</button>
             </li>
+            {renderLabels}
+            
         </ul>        
       </form>
     </section>
