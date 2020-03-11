@@ -36,7 +36,12 @@ const Labeller = props => {
 
   const handleSubmit = event => {
     event.preventDefault();
-    setListLabels( listLabels.concat(value) );   
+    if(!listLabels.includes(value)) {
+      setListLabels( listLabels.concat(value) );   
+    }
+    else {
+      alert('Duplicate label detected!');
+    }
 
     //  Clears value from input after submitting 
     formResetRef.current.reset();
@@ -51,28 +56,30 @@ const Labeller = props => {
     setListLabels(listLabels.filter(item => item != labelToRemove ));
   }
 
-  const selectionClassName = () => {
-    
+
+
+  const generateKey = pre => {
+    return `${ pre }_${ new Date().getTime() }`;
   }
 
   const renderLabels = listLabels.map((label) => 
-      <li key={label} className={props.isSelecting() ? "label-entry selected" : "label-entry"} >
+      <li key={generateKey(label)} className={props.isSelecting() ? "label-entry selected" : "label-entry"} >
         {label + ':'}
         <button className="delete-button" onClick={ event => { event.preventDefault(); handleDeletion(label) } }>x</button>
       </li>
       );
   
-  const renderContent = listLabels.map(() => 
-    <li className="content-entry" >
+  const renderContent = listLabels.map((label) => 
+    <li key={label} className="content-entry" >
       placeholder
       <button onClick={() => {
       if(!props.isSelecting()) {
-        props.toggleSelecting(1);
-        console.log('toggle selecting to ' + props.isSelecting());
+        props.toggleSelecting(label);
+        console.log('toggled selecting to ' + props.isSelecting());
       } else {
         props.toggleSelecting(0);
       }
-    }}> select</button>
+    }}>select</button>
     </li>
   );
 
