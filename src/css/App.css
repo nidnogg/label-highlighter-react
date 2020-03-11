@@ -71,11 +71,18 @@ body {
 
 .labeller {
   position: relative;
+  display: inline-flex;
   padding-left: 30vw;
   margin-left: 5vw;
   padding: 10px;
-  min-width: 30vw;
+  min-width: 60vw;
   background-color: #4D432B;
+}
+
+.label-table {
+  position: absolute;
+  top: 32px;
+  width: 20%;
 }
 
 .initial-input {
@@ -97,15 +104,33 @@ body {
 
 .label-entry {
   background-color: #78705B;
-  width: 180px;
+  width: 100%;
 }
 
+
 .delete-button {
-  position: absolute;
-  right: 0;
+  position: relative;
+  left: 80%;
+  bottom: 0;
   min-height: 20px;
   min-width: 20px;
 }
+
+.content-header {
+  margin-bottom: 8px;
+}
+
+.content-table {
+  position: absolute;
+  top: 32px;
+  left: 30%;
+  width: 70%;
+}
+
+.content-entry {
+  width: 100%;
+}
+
 
 .textArea {
   /*position: relative;

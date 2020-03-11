@@ -2,6 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import './css/App.css';
 
 const App = () => {
+  const [isSelecting, willSelect] = useState(0);
+
+  const isSelectingCallback = () => {
+    return isSelecting;
+  }
+
+  const willSelectCallback = value => {
+    willSelect(value);
+  }
+
   return (
     <section className="main">
       <div className="main-header">
@@ -12,7 +22,7 @@ const App = () => {
       <br/>
       <div className="main-content">
         <TextArea />
-        <Labeller />
+        <Labeller isSelecting={isSelectingCallback} willSelect={willSelectCallback} />
       </div>
     </section>
   );
@@ -23,11 +33,12 @@ const Labeller = () => {
   const [value, setValue] = useState(0);
 
   const formResetRef = useRef(0);
+
   const handleSubmit = event => {
     event.preventDefault();
     setListLabels( listLabels.concat(value) );   
 
-    //  Clears value from input after submitting
+    //  Clears value from input after submitting 
     formResetRef.current.reset();
   }
 
@@ -42,37 +53,61 @@ const Labeller = () => {
 
   const renderLabels = listLabels.map((label) => 
       <li key={label} className="label-entry">
-        {label}
+        {label + ':'}
         <button className="delete-button" onClick={ event => { event.preventDefault(); handleDeletion(label) } }>x</button>
       </li>
       );
   
+  const renderContent = listLabels.map(() => 
+    <li className="content-entry">
+      placeholder
+    </li>
+  );
+
   useEffect(() => {
     console.log("listLabels:" + listLabels);
   });
 
+  //const renderLabelContents = listContents.map((contents))
+
   return (
     <section className="labeller">
-      <h2>labeller</h2>
-      <form className="label-table" ref={formResetRef} onSubmit={handleSubmit}>
-        {/* */}
+      <section className="label-table">
+      <h2>labels</h2>
+        <form ref={formResetRef} onSubmit={handleSubmit}>
+          {/* */}
+          <ul>
+              <li className="label-entry">
+                <input className="initial-input" name="addButton" type="text" placeholder="Add new Label" onChange={handleChange}/>
+                <button className="add-button" type="submit">+</button>
+              </li>
+              {renderLabels}
+          </ul>        
+        </form>
+      </section>
+
+      <section className="content-table">
+      <h2 className="content-header">contents</h2>
         <ul>
-            <li className="label-entry">
-              <input className="initial-input" name="addButton" type="text" placeholder="Add new Label" onChange={handleChange}/>
-              <button className="add-button" type="submit">+</button>
-            </li>
-            {renderLabels}
-        </ul>        
-      </form>
+          <li><br/></li>
+          {renderContent}
+        
+        </ul>
+      </section>
     </section>
   );
 }
 
 const TextArea = () => {
+  const [showTextSelection, setTextSelection] = useState([]);
+  const handleMouseUp = () => {
+    console.log('Selected text: ' + window.getSelection().toString());
+  }
+
   return (
     <section className="textArea">
       <h2>textArea</h2>
-      <p>
+      <p onMouseUp={handleMouseUp} className="text-content">
         The bucket soaked in mineral water of Zöndgernopd 
         Mixed with a dosage of Zöndgernopd prepared from their 
         Sulfur by the latest chemical techniques. When mixed with 
