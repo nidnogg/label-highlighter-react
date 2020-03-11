@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import './css/App.css';
 
 const App = () => {
-  const [isSelecting, willSelect] = useState(0);
+  const [isSelecting, toggleSelecting] = useState(0);
 
   const isSelectingCallback = () => {
     return isSelecting;
   }
 
-  const willSelectCallback = value => {
-    willSelect(value);
+  const toggleSelectingCallback = value => {
+    toggleSelecting(value);
   }
 
   return (
@@ -21,14 +21,14 @@ const App = () => {
       </div>
       <br/>
       <div className="main-content">
-        <TextArea />
-        <Labeller isSelecting={isSelectingCallback} willSelect={willSelectCallback} />
+        <TextArea isSelecting={isSelectingCallback} toggleSelecting={toggleSelectingCallback} />
+        <Labeller isSelecting={isSelectingCallback} toggleSelecting={toggleSelectingCallback} />
       </div>
     </section>
   );
 }
 
-const Labeller = () => {
+const Labeller = props => {
   const [listLabels, setListLabels] = useState([]);
   const [value, setValue] = useState(0);
 
@@ -51,24 +51,34 @@ const Labeller = () => {
     setListLabels(listLabels.filter(item => item != labelToRemove ));
   }
 
+  const selectionClassName = () => {
+    
+  }
+
   const renderLabels = listLabels.map((label) => 
-      <li key={label} className="label-entry">
+      <li key={label} className={props.isSelecting() ? "label-entry selected" : "label-entry"} >
         {label + ':'}
         <button className="delete-button" onClick={ event => { event.preventDefault(); handleDeletion(label) } }>x</button>
       </li>
       );
   
   const renderContent = listLabels.map(() => 
-    <li className="content-entry">
+    <li className="content-entry" >
       placeholder
+      <button onClick={() => {
+      if(!props.isSelecting()) {
+        props.toggleSelecting(1);
+        console.log('toggle selecting to ' + props.isSelecting());
+      } else {
+        props.toggleSelecting(0);
+      }
+    }}> select</button>
     </li>
   );
 
   useEffect(() => {
     console.log("listLabels:" + listLabels);
   });
-
-  //const renderLabelContents = listContents.map((contents))
 
   return (
     <section className="labeller">
@@ -98,10 +108,16 @@ const Labeller = () => {
   );
 }
 
-const TextArea = () => {
+const TextArea = props => {
   const [showTextSelection, setTextSelection] = useState([]);
   const handleMouseUp = () => {
-    console.log('Selected text: ' + window.getSelection().toString());
+    if(props.isSelecting()) {
+      if(window.getSelection().toString().length < 2 || window.getSelection().toString() == ' ') {
+        console.log('Selected empty or insufficient text!');
+      } else {
+        console.log('Selected text: ' + window.getSelection().toString());
+      }
+    }
   }
 
   return (
