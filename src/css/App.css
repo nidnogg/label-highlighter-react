@@ -34,6 +34,10 @@ h1, h2, h3, h4, h5, h6 {
 li {
   list-style: none;
 }
+
+button {
+  font: inherit;
+}
 body {
   color: #FFFFF9;
   background-color: #998F74;
@@ -74,8 +78,33 @@ body {
   background-color: #4D432B;
 }
 
+.initial-input {
+  width: 80%;
+  font: inherit;
+  font-size: 0.8em;
+  background-color: #78705B;
+  border: none;
+  min-height: 25px;
+}
+
+.add-button {
+  position: absolute;
+  right: 0;
+  min-height: 20px;
+  min-width: 20px;
+  /*todo*/
+}
+
 .label-entry {
   background-color: #78705B;
+  width: 180px;
+}
+
+.delete-button {
+  position: absolute;
+  right: 0;
+  min-height: 20px;
+  min-width: 20px;
 }
 
 .textArea {

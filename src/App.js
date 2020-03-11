@@ -22,40 +22,46 @@ const Labeller = () => {
   const [listLabels, setListLabels] = useState([]);
   const [value, setValue] = useState(0);
 
+  const formResetRef = useRef(0);
   const handleSubmit = event => {
-    console.log("onSubmit called, current value state is: " + value);
-    setListLabels( listLabels.concat(value) );
-    
     event.preventDefault();
-    console.log("listLabels:" + listLabels);
+    setListLabels( listLabels.concat(value) );   
+
+    //  Clears value from input after submitting
+    formResetRef.current.reset();
   }
 
   const handleChange = event => {
     setValue(event.target.value);
   }
 
+  const handleDeletion = label => {
+    const labelToRemove = label;
+    setListLabels(listLabels.filter(item => item != labelToRemove ));
+  }
+
   const renderLabels = listLabels.map((label) => 
-      <li className="label-entry">{label}</li>
+      <li key={label} className="label-entry">
+        {label}
+        <button className="delete-button" onClick={ event => { event.preventDefault(); handleDeletion(label) } }>x</button>
+      </li>
       );
-    
-
-
+  
   useEffect(() => {
-    //renderLabels();
+    console.log("listLabels:" + listLabels);
   });
 
   return (
     <section className="labeller">
       <h2>labeller</h2>
-      <form className="label-table" onSubmit={handleSubmit}>
+      <form className="label-table" ref={formResetRef} onSubmit={handleSubmit}>
         {/* */}
         <ul>
-            <li className="label-entry label-entry-initial">
-              <input type="text" placeholder="Add new Label" onChange={handleChange}/>
-              <button type="submit">+</button>
+            <li className="label-entry">
+              <input className="initial-input" name="addButton" type="text" placeholder="Add new Label" onChange={handleChange}/>
+              <button className="add-button" type="submit">+</button>
             </li>
             {renderLabels}
-            
         </ul>        
       </form>
     </section>
