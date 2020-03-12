@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './css/App.css';
 
 const App = () => {
-  const [selectedText, updateSelectedText] = useState([]);
+  const [selectedText, updateSelectedText] = useState(new Map());
   const [isSelecting, toggleSelecting] = useState(null);
 
   const selectedTextCallback = labelName => {
@@ -14,9 +14,17 @@ const App = () => {
     }
   }
 
-  const updateSelectedTextCallback = (labelName, contentValue) => {
-    if(selectedText) {
-      updateSelectedText(selectedText.concat(contentValue));
+  const updateSelectedTextCallback = (labelName, newContent) => {
+    if(selectedText.has(labelName)) {
+      let prevContent = selectedText.get(labelName);
+      //console.log('prevContent:' + prevContent);
+      //console.log('newContent:' + newContent);
+
+      updateSelectedText(selectedText.set(labelName, prevContent.concat(newContent)));      
+      console.log(selectedText.get(labelName));
+
+    } else {
+      updateSelectedText(selectedText.set(labelName, [newContent]));
     }
   }
 
@@ -92,10 +100,8 @@ const Labeller = props => {
   
   const renderContent = listLabels.map(label => 
     <li key={generateKey(label)} className="content-entry" >
-      <span contenteditable="true">
-        {props.selectedText()}
-      </span>
-      placeholder
+      {props.selectedText().has(label) ? props.selectedText().get(label): 'no content!'}
+      {/*props.selectedText() ? props.selectedText().get(label).content : ''*/}
       {/*props.selectedText(label) ? printContent(props.selectedText(label)) : ''*/}
       <button onClick={() => {
       if(!props.isSelecting()) {
@@ -109,6 +115,7 @@ const Labeller = props => {
 
   useEffect(() => {
     console.log(props.isSelecting() + ' is selecting');
+    console.log(props.selectedText().has('1') ? props.selectedText().get(label).content : 'no content!')
   });
 
   return (
