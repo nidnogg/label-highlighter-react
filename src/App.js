@@ -2,21 +2,28 @@ import React, { useState, useEffect, useRef } from 'react';
 import './css/App.css';
 
 const App = () => {
-  const [selectedText, updateSelectedText] = useState([]);
+  const [selectedText, updateSelectedText] = useState(new Map());
   const [isSelecting, toggleSelecting] = useState(null);
 
   const selectedTextCallback = labelName => {
-    if(!selectedText) {
+    /*
+    if(!selectedText.has(labelName)) {
       console.log('There is no selected text');
       return null;
     } else {
-      return selectedText;
-    }
+      */
+    return selectedText;
+  //  }
   }
 
-  const updateSelectedTextCallback = (labelName, contentValue) => {
+  const updateSelectedTextCallback = (labelName, newContent) => {
     if(selectedText) {
-      updateSelectedText(selectedText.concat(contentValue));
+      if(selectedText.has(labelName)) {
+        let updatedContent = selectedText.get(labelName).concat([newContent]);
+        updateSelectedText(selectedText.set(labelName, updatedContent));
+      } else {
+        updateSelectedText(selectedText.set(labelName, [newContent]));
+      }
     }
   }
 
@@ -92,11 +99,10 @@ const Labeller = props => {
   
   const renderContent = listLabels.map(label => 
     <li key={generateKey(label)} className="content-entry" >
-      <span contenteditable="true">
-        {props.selectedText()}
+      <span contentEditable="true">
+        {props.selectedText().has(label) ? printContent(props.selectedText().get(label)) : 'failed'}
+        {/*props.selectedText()*/}
       </span>
-      placeholder
-      {/*props.selectedText(label) ? printContent(props.selectedText(label)) : ''*/}
       <button onClick={() => {
       if(!props.isSelecting()) {
         props.toggleSelecting(label);
@@ -139,6 +145,15 @@ const Labeller = props => {
 }
 
 const TextArea = props => {
+
+  const deleteSelectionStateText = (stringToDelete, label) => {
+    //console.log(stringToDelete);
+    let modifiedContent = props.selectedText().get(label);
+    modifiedContent = modifiedContent.filter(item => item !== stringToDelete);
+    console.log(`Removed ${stringToDelete}, current content array: ${modifiedContent}`);
+    props.selectedText().set(label, modifiedContent);
+  }
+
   const handleMouseUp = () => {
     let label = props.isSelecting();
     if(label) {
@@ -146,6 +161,16 @@ const TextArea = props => {
       if(textHighlight.length < 2 || textHighlight == ' ') {
         console.log('Selected empty or insufficient text!');
       } else {
+        let range = window.getSelection().getRangeAt(0);
+        let selectionContents = range.extractContents();
+        let span = document.createElement("span");
+        span.style.backgroundColor = "black";
+        span.onclick = () => {
+          span.outerHTML = span.innerHTML;
+          deleteSelectionStateText(span.innerHTML, label);
+        }
+        span.appendChild(selectionContents);
+        range.insertNode(span);
         props.updateSelectedText(label, textHighlight);
       }
     }
@@ -181,15 +206,15 @@ const generateKey = pre => {
 
 const printContent = contentObjArr => {
   console.log('INSIDE printContent');
-  let toPrint = contentObjArr[0].content;
+  let toPrint = contentObjArr[0];
   if(contentObjArr.length > 1) {
     for (let index = 1; index < contentObjArr.length; index++) {
-      console.log(contentObjArr[index]);
-      toPrint.concat('; ' + contentObjArr[index].content);
+     // console.log(contentObjArr[index]);
+      toPrint = toPrint.concat(`; ${contentObjArr[index]}`);
     }
   } 
   console.log(toPrint);
-
   return toPrint;
 }
+
 export default App;
