@@ -163,13 +163,25 @@ const TextArea = props => {
       } else {
         let range = window.getSelection().getRangeAt(0);
         let selectionContents = range.extractContents();
+        
         let span = document.createElement("span");
+        let spanTooltip = document.createElement("span");
+
         span.style.backgroundColor = "black";
+
+        span.className = "tooltip";
+        spanTooltip.className = "tooltiptext";
+        spanTooltip.innerText = "Click to remove from label";
+
         span.onclick = () => {
+          //span.outerHTML = span.innerHTML;
+          span.removeChild(spanTooltip);
           span.outerHTML = span.innerHTML;
           deleteSelectionStateText(span.innerHTML, label);
         }
         span.appendChild(selectionContents);
+        span.appendChild(spanTooltip);
+
         range.insertNode(span);
         props.updateSelectedText(label, textHighlight);
       }
