@@ -58,8 +58,10 @@ body {
 .main-header {
   position: absolute;
   display: block;
-  top: 0;
+  top: -20px;
+  left: 10vw;
   clear: both;
+  font-size: 2rem;
 }
 
 .main-content {

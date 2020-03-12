@@ -2,21 +2,26 @@ import React, { useState, useEffect, useRef } from 'react';
 import './css/App.css';
 
 const App = () => {
-  const [selectedText, updateSelectedText] = useState([]);
+  const [selectedText, updateSelectedText] = useState(new Map());
   const [isSelecting, toggleSelecting] = useState(null);
 
   const selectedTextCallback = labelName => {
     if(!selectedText) {
       console.log('There is no selected text');
-      return null;
+      return 0;
     } else {
-      return selectedText;
+      return selectedText.get(labelName);
     }
   }
 
   const updateSelectedTextCallback = (labelName, contentValue) => {
-    if(selectedText) {
-      updateSelectedText(selectedText.concat(contentValue));
+    if(selectedText.get(labelName)) { // if labelName is already a label key in map, append to its content property via concat
+      let existingIdContentPair = selectedText.get(labelName);
+      console.log('adding existing label text to state')
+      updateSelectedText(selectedText.set( labelName, existingIdContentPair.concat({id: `${labelName}-${contentValue}`, content: contentValue}) ));
+    } else {
+      console.log('adding non existing label text to state')
+      updateSelectedText(selectedText.set(labelName, [{id: `${labelName}-${contentValue}`, content: contentValue}] ));
     }
   }
 
@@ -93,7 +98,6 @@ const Labeller = props => {
   const renderContent = listLabels.map(label => 
     <li key={generateKey(label)} className="content-entry" >
       placeholder
-      {props.selectedText()}
       {/*props.selectedText(label) ? printContent(props.selectedText(label)) : ''*/}
       <button onClick={() => {
       if(!props.isSelecting()) {
@@ -106,7 +110,11 @@ const Labeller = props => {
   );
 
   useEffect(() => {
-    console.log(props.isSelecting() + ' is selecting');
+    if(props.selectedText(1)) {
+      console.log('dick');
+    }
+    //console.log(props.isSelecting() + ' is selecting');
+
   });
 
   return (
@@ -152,8 +160,8 @@ const TextArea = props => {
 
 
   useEffect(() => { 
-    //let label = props.isSelecting();
-    //props.selectedText(label) ? printContent(props.selectedText(label)) : '';
+    let label = props.isSelecting();
+    props.selectedText(label) ? printContent(props.selectedText(label)) : '';
 
   });
   return (
