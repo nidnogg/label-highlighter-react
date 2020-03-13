@@ -9,11 +9,15 @@ const App = () => {
     return selectedText;
   }
 
-  const updateSelectedTextCallback = (labelName, newContent) => {
+  const updateSelectedTextCallback = (labelName, newContent, replaceFlag) => {
     if(selectedText) {
       if(selectedText.has(labelName)) {
-        let updatedContent = selectedText.get(labelName).concat([newContent]);
-        updateSelectedText(selectedText.set(labelName, updatedContent));
+        if(!replaceFlag) {
+          let updatedContent = selectedText.get(labelName).concat([newContent]);
+          updateSelectedText(selectedText.set(labelName, updatedContent));
+        } else {
+          updateSelectedText(selectedText.set(labelName, newContent));
+        }
       } else {
         updateSelectedText(selectedText.set(labelName, [newContent]));
       }
@@ -143,8 +147,10 @@ const TextArea = props => {
     //console.log(stringToDelete);
     let modifiedContent = props.selectedText().get(label);
     modifiedContent = modifiedContent.filter(item => item !== stringToDelete);
-    console.log(`Removed ${stringToDelete}, current content array: ${modifiedContent}`);
-    props.selectedText().set(label, modifiedContent);
+    //console.log(`Removed ${stringToDelete}, current content array: ${modifiedContent}`);
+
+    props.updateSelectedText(label, modifiedContent, true);
+    //props.updateSelectedText(label, modifiedContent);
   }
 
   const handleMouseUp = () => {
@@ -177,7 +183,7 @@ const TextArea = props => {
         span.appendChild(spanTooltip);
 
         range.insertNode(span);
-        props.updateSelectedText(label, textHighlight);
+        props.updateSelectedText(label, textHighlight, false);
       }
     }
   }
