@@ -6,14 +6,7 @@ const App = () => {
   const [isSelecting, toggleSelecting] = useState(null);
 
   const selectedTextCallback = labelName => {
-    /*
-    if(!selectedText.has(labelName)) {
-      console.log('There is no selected text');
-      return null;
-    } else {
-      */
     return selectedText;
-  //  }
   }
 
   const updateSelectedTextCallback = (labelName, newContent) => {
@@ -177,6 +170,7 @@ const TextArea = props => {
           //span.outerHTML = span.innerHTML;
           span.removeChild(spanTooltip);
           span.outerHTML = span.innerHTML;
+          console.log('log im looking for ' + span.innerHTML);
           deleteSelectionStateText(span.innerHTML, label);
         }
         span.appendChild(selectionContents);
