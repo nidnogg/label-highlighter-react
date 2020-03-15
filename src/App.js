@@ -197,13 +197,24 @@ const TextArea = props => {
   let labelRefresh = props.isSelecting();
     
   const deleteLabelNode = (node, label) => {
-    
+    for (let nodeChild of node.childNodes) {
+      if(nodeChild.nodeType != Node.TEXT_NODE) {
+        // Remove the actual child DOM node if it's not a text node
+        //console.log(`node to remove ${node}`);
+        node.removeChild(nodeChild);
+        node.outerHTML = node.innerHTML;
+        deleteSelectionStateText(node.innerText, label);
+        flushLabeller();
+      } 
+    }
   }
 
   const clearSelection = () => {
     if (window.getSelection) { window.getSelection().removeAllRanges(); }
     else if (document.selection) { document.selection.empty(); }
   }
+
+
   const handleMouseUp = () => {
     let label = props.isSelecting();
    
@@ -227,11 +238,7 @@ const TextArea = props => {
         spanTooltip.innerText = "Click to remove from label";
 
         span.onclick = () => {
-          //deleteLabelNode(span, label);
-          span.removeChild(span.childNodes.item(1));
-          span.outerHTML = span.innerHTML;
-          deleteSelectionStateText(span.innerText, label);
-          flushLabeller();
+          deleteLabelNode(span, label);
         }
     
         // In the case of an overlap - check for child span nodes (Non text nodes!)
@@ -241,10 +248,7 @@ const TextArea = props => {
             if(node.nodeType != Node.TEXT_NODE) {
               // Remove the actual child DOM node if it's not a text nnode
               console.log(`node to remove ${node.childNodes.item(1)}`);
-              node.removeChild(node.childNodes.item(1));
-              node.outerHTML = node.innerHTML;
-              deleteSelectionStateText(node.innerText, label);
-              flushLabeller();
+              deleteLabelNode(node, label);
             }
           }
           
