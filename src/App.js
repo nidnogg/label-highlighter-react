@@ -3,6 +3,8 @@ import './css/App.css';
 
 const App = () => {
   const [selectedText, updateSelectedText] = useState(new Map());
+  const [selectedTextPosition, updateSelectedTextPosition] = useState(new Map());
+
   const [isSelecting, toggleSelecting] = useState(null);
 
   const selectedTextCallback = labelName => {
@@ -23,6 +25,29 @@ const App = () => {
       }
     }
   }
+
+  /*
+  const selectedTextPositionCallback = labelName => {
+    return selectedTextPosition.get(labelName);
+  }
+  */
+
+  /*
+  const updateSelectedTextPositionCallback = (labelName, newContent, replaceFlag) => {
+    if(selectedText) {
+      if(selectedText.has(labelName)) {
+        if(!replaceFlag) {
+          let updatedContent = selectedText.get(labelName).concat([newContent]);
+          updateSelectedText(selectedText.set(labelName, updatedContent));
+        } else {
+          updateSelectedText(selectedText.set(labelName, newContent));
+        }
+      } else {
+        updateSelectedText(selectedText.set(labelName, [newContent]));
+      }
+    }
+  }
+  */
 
   const isSelectingCallback = () => {
     return isSelecting;
@@ -74,6 +99,10 @@ const Labeller = props => {
 
     //  Clears value from input after submitting 
     formResetRef.current.reset();
+
+    // Sets the most recently created label as the selecting one 
+    props.toggleSelecting(value);
+
   }
 
   const handleChange = event => {
@@ -84,7 +113,28 @@ const Labeller = props => {
     const labelToRemove = label;
     props.toggleSelecting('');
     setValue('');
+    deleteLabelHighlights(label);
     setListLabels(listLabels.filter(item => item != labelToRemove ));
+  }
+
+  const deleteLabelHighlights = label => {
+    if(props.selectedText()) {
+      props.updateSelectedText(label, [], true);
+      let spanNodes = document.getElementsByClassName(`${label} tooltip`);
+      let spanTooltipNodes = document.getElementsByClassName(`${label} tooltiptext`);
+      
+      while (spanNodes.length > 0) {
+        console.log(`Deleting: spanNodes[0] = ${spanNodes[0]}`);
+        if(spanTooltipNodes[0].parentNode) {
+          spanTooltipNodes[0].parentNode.removeChild(spanTooltipNodes[0]);
+          spanNodes[0].outerHTML = spanNodes[0].innerHTML;
+        }
+      }
+    }
+    else {
+      return;
+    }
+  
   }
 
   const renderLabels = listLabels.map((label) => 
@@ -96,22 +146,24 @@ const Labeller = props => {
   
   const renderContent = listLabels.map(label => 
     <li key={generateKey(label)} className="content-entry" >
-      <span contentEditable="true">
-        {props.selectedText().has(label) ? printContent(props.selectedText().get(label)) : 'failed'}
-        {/*props.selectedText()*/}
+      {/*<span contentEditable="true">*/}
+      <span>
+        {props.selectedText().has(label) ? printContent(props.selectedText().get(label)) : 'Select a phrase or word from the left-most area'}
       </span>
       <button onClick={() => {
-      if(!props.isSelecting()) {
-        props.toggleSelecting(label);
-      } else {
-        props.toggleSelecting(null);
-      }
-    }}>select</button>
+        if(!props.isSelecting()) {
+          props.toggleSelecting(label);
+        } else {
+          props.toggleSelecting(null);
+        }
+      }}>
+      select
+      </button>
     </li>
   );
 
   useEffect(() => {
-    console.log(props.isSelecting() + ' is selecting');
+    
   });
 
   return (
@@ -144,13 +196,9 @@ const Labeller = props => {
 const TextArea = props => {
 
   const deleteSelectionStateText = (stringToDelete, label) => {
-    //console.log(stringToDelete);
     let modifiedContent = props.selectedText().get(label);
     modifiedContent = modifiedContent.filter(item => item !== stringToDelete);
-    //console.log(`Removed ${stringToDelete}, current content array: ${modifiedContent}`);
-
     props.updateSelectedText(label, modifiedContent, true);
-    //props.updateSelectedText(label, modifiedContent);
   }
 
   const handleMouseUp = () => {
@@ -168,22 +216,59 @@ const TextArea = props => {
 
         span.style.backgroundColor = "black";
 
-        span.className = "tooltip";
-        spanTooltip.className = "tooltiptext";
+        span.className = `${label} ${generateKey(label)} tooltip`;
+        spanTooltip.className = `${label} tooltiptext`;
         spanTooltip.innerText = "Click to remove from label";
 
         span.onclick = () => {
           //span.outerHTML = span.innerHTML;
           span.removeChild(spanTooltip);
           span.outerHTML = span.innerHTML;
-          console.log('log im looking for ' + span.innerHTML);
           deleteSelectionStateText(span.innerHTML, label);
         }
-        span.appendChild(selectionContents);
-        span.appendChild(spanTooltip);
+        
+        /*
+       */
+        // In the case of an overlap - check for child span nodes
+        if(span.childNodes.length > 0) {
+          console.log('overlapped! child nodes:');
+          console.log(span.childNodes);
+          while (span.childNodes.length > 0) {
+            console.log(`childNodes[0] = ${span.childNodes[0]}`);
 
-        range.insertNode(span);
-        props.updateSelectedText(label, textHighlight, false);
+            // If it has a parent, it's a child span node already selected by the user
+            if(span.childNodes[0].parentNode) {
+              // Delete it from the virtual DOM state as it would be deleted on a click mouse event
+              deleteSelectionStateText(span.childNodes[0].innerHTML, label);
+
+              // Remove the actual child DOM node
+              span.childNodes[0].parentNode.removeChild([0]);
+            }
+          }
+          
+          // Append the broader selection to the highlights.
+          span.appendChild(selectionContents);
+          span.appendChild(spanTooltip);
+          
+          
+          range.insertNode(span);
+          props.updateSelectedText(label, textHighlight, false);
+          
+        } else { // Append a new selection to highlighted text
+          span.appendChild(selectionContents);
+          span.appendChild(spanTooltip);
+  
+          range.insertNode(span);
+          props.updateSelectedText(label, textHighlight, false);
+        }
+
+        
+        // Flush hack so that isSelecting state re-renders correctly in Labeller component
+        /*
+        let labelFlush = props.isSelecting();
+        props.toggleSelecting(null);
+        props.toggleSelecting(labelFlush);
+        */
       }
     }
   }
@@ -217,7 +302,6 @@ const generateKey = pre => {
 }
 
 const printContent = contentObjArr => {
-  console.log('INSIDE printContent');
   let toPrint = contentObjArr[0];
   if(contentObjArr.length > 1) {
     for (let index = 1; index < contentObjArr.length; index++) {
@@ -225,7 +309,6 @@ const printContent = contentObjArr => {
       toPrint = toPrint.concat(`; ${contentObjArr[index]}`);
     }
   } 
-  console.log(toPrint);
   return toPrint;
 }
 
