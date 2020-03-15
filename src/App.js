@@ -134,7 +134,6 @@ const Labeller = props => {
     else {
       return;
     }
-  
   }
 
   const renderLabels = listLabels.map((label) => 
@@ -151,7 +150,7 @@ const Labeller = props => {
         {props.selectedText().has(label) ? printContent(props.selectedText().get(label)) : 'Select a phrase or word from the left-most area'}
       </span>
       <button onClick={() => {
-        if(!props.isSelecting()) {
+        if(!props.isSelecting() || props.isSelecting() === label) {
           props.toggleSelecting(label);
         } else {
           props.toggleSelecting(null);
@@ -163,7 +162,7 @@ const Labeller = props => {
   );
 
   useEffect(() => {
-    
+    console.log(`${props.isSelecting()} is selecting!`);
   });
 
   return (
@@ -186,7 +185,6 @@ const Labeller = props => {
         <ul>
           <li><br/></li>
           {renderContent}
-        
         </ul>
       </section>
     </section>
@@ -201,8 +199,20 @@ const TextArea = props => {
     props.updateSelectedText(label, modifiedContent, true);
   }
 
+  // Re-renders labeller component by toggling its state rapidly
+  const flushLabeller = () => {
+    props.toggleSelecting(null);
+          setTimeout(() => { 
+            props.toggleSelecting(labelRefresh);
+          }, 0.5);
+  } 
+
+  //let labelRefreshTrigger = false;
+  let labelRefresh = props.isSelecting();
+    
   const handleMouseUp = () => {
     let label = props.isSelecting();
+   
     if(label) {
       let textHighlight = window.getSelection().toString();
       if(textHighlight.length < 2 || textHighlight == ' ') {
@@ -225,10 +235,9 @@ const TextArea = props => {
           span.removeChild(spanTooltip);
           span.outerHTML = span.innerHTML;
           deleteSelectionStateText(span.innerHTML, label);
+          flushLabeller();
         }
-        
-        /*
-       */
+    
         // In the case of an overlap - check for child span nodes
         if(span.childNodes.length > 0) {
           console.log('overlapped! child nodes:');
@@ -250,36 +259,32 @@ const TextArea = props => {
           span.appendChild(selectionContents);
           span.appendChild(spanTooltip);
           
-          
           range.insertNode(span);
           props.updateSelectedText(label, textHighlight, false);
-          
+          props.toggleSelecting(null);
+          //return 1;
+                            
         } else { // Append a new selection to highlighted text
           span.appendChild(selectionContents);
           span.appendChild(spanTooltip);
   
           range.insertNode(span);
           props.updateSelectedText(label, textHighlight, false);
+          flushLabeller();
         }
-
-        
-        // Flush hack so that isSelecting state re-renders correctly in Labeller component
-        /*
-        let labelFlush = props.isSelecting();
-        props.toggleSelecting(null);
-        props.toggleSelecting(labelFlush);
-        */
       }
     }
+
+  
+    //return 0;
   }
 
 
 
-  useEffect(() => { 
-    //let label = props.isSelecting();
-    //props.selectedText(label) ? printContent(props.selectedText(label)) : '';
-
+  useEffect(() => {
+    
   });
+
   return (
     <section className="textArea">
       <h2>textArea</h2>
@@ -296,6 +301,12 @@ const TextArea = props => {
     </section>
   );
 } 
+
+// Hooks and helpers
+const useForceUpdate = () => {
+  const [, setIt] = useState(false);
+  return () => setIt(it => !it);
+};
 
 const generateKey = pre => {
   return `${ pre }_${ new Date().getTime() }`;
