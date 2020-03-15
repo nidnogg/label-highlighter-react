@@ -3,7 +3,7 @@ import './css/App.css';
 
 const App = () => {
   const [selectedText, updateSelectedText] = useState(new Map());
-  const [selectedTextPosition, updateSelectedTextPosition] = useState(new Map());
+  const [selectedTextNode, updateSelectedTextNode] = useState(new Map());
 
   const [isSelecting, toggleSelecting] = useState(null);
 
@@ -17,37 +17,24 @@ const App = () => {
         if(!replaceFlag) {
           let updatedContent = selectedText.get(labelName).concat([newContent]);
           updateSelectedText(selectedText.set(labelName, updatedContent));
+          
+          // clone
+          let updatedContentPosition = selectedText.get(labelName).concat([newContent]);
+          updateSelectedTextNode(selectedTextNode.set(labelName, updatedContentPosition));
         } else {
           updateSelectedText(selectedText.set(labelName, newContent));
+                    // clone
+
+          updateSelectedTextNode(selectedTextNode.set(labelName, newContent));
         }
       } else {
         updateSelectedText(selectedText.set(labelName, [newContent]));
+                  // clone
+
+        updateSelectedTextNode(selectedTextNode.set(labelName, [newContent]));
       }
     }
   }
-
-  /*
-  const selectedTextPositionCallback = labelName => {
-    return selectedTextPosition.get(labelName);
-  }
-  */
-
-  /*
-  const updateSelectedTextPositionCallback = (labelName, newContent, replaceFlag) => {
-    if(selectedText) {
-      if(selectedText.has(labelName)) {
-        if(!replaceFlag) {
-          let updatedContent = selectedText.get(labelName).concat([newContent]);
-          updateSelectedText(selectedText.set(labelName, updatedContent));
-        } else {
-          updateSelectedText(selectedText.set(labelName, newContent));
-        }
-      } else {
-        updateSelectedText(selectedText.set(labelName, [newContent]));
-      }
-    }
-  }
-  */
 
   const isSelectingCallback = () => {
     return isSelecting;
@@ -207,35 +194,16 @@ const TextArea = props => {
           }, 0.5);
   } 
 
-  function getNodesInRange(range) {
-    var start = range.startContainer;
-    var end = range.endContainer;
-    var commonAncestor = range.commonAncestorContainer;
-    var nodes = [];
-    var node;
-
-    // walk parent nodes from start to common ancestor
-    for (node = start.parentNode; node; node = node.parentNode)
-    {
-        nodes.push(node);
-        if (node == commonAncestor)
-            break;
-    }
-    nodes.reverse();
-
-    // walk children and siblings from start until end is found
-    for (node = start; node; node = getNextNode(node))
-    {
-        nodes.push(node);
-        if (node == end)
-            break;
-    }
-
-    return nodes;
-}
-
   let labelRefresh = props.isSelecting();
     
+  const deleteLabelNode = (node, label) => {
+    
+  }
+
+  const clearSelection = () => {
+    if (window.getSelection) { window.getSelection().removeAllRanges(); }
+    else if (document.selection) { document.selection.empty(); }
+  }
   const handleMouseUp = () => {
     let label = props.isSelecting();
    
@@ -255,16 +223,14 @@ const TextArea = props => {
         span.className = `${label} ${generateKey(label)} tooltip`;
         span.appendChild(selectionContents);
 
-        spanTooltip.className = `${label} tooltiptext`;
+        spanTooltip.className = `${label} tooltiptext no_highlighting`;
         spanTooltip.innerText = "Click to remove from label";
 
-
         span.onclick = () => {
-          //span.outerHTML = span.innerHTML;
-          span.removeChild(spanTooltip);
+          //deleteLabelNode(span, label);
+          span.removeChild(span.childNodes.item(1));
           span.outerHTML = span.innerHTML;
-          console.log(`working delete span inner html sent to deletion ${span.innerHTML}`  );
-          deleteSelectionStateText(span.innerHTML, label);
+          deleteSelectionStateText(span.innerText, label);
           flushLabeller();
         }
     
@@ -274,6 +240,7 @@ const TextArea = props => {
           for (let node of span.childNodes) {
             if(node.nodeType != Node.TEXT_NODE) {
               // Remove the actual child DOM node if it's not a text nnode
+              console.log(`node to remove ${node.childNodes.item(1)}`);
               node.removeChild(node.childNodes.item(1));
               node.outerHTML = node.innerHTML;
               deleteSelectionStateText(node.innerText, label);
@@ -287,6 +254,7 @@ const TextArea = props => {
           range.insertNode(span);
           props.updateSelectedText(label, textHighlight, false);
           props.toggleSelecting(null);
+          clearSelection();
                    
         } else { // Append a new selection to highlighted text
           //span.appendChild(selectionContents);
@@ -295,12 +263,11 @@ const TextArea = props => {
           range.insertNode(span);
           props.updateSelectedText(label, textHighlight, false);
           flushLabeller();
+          
+          clearSelection();
         }
       }
-    }
-
-  
-    //return 0;
+    }  
   }
 
   return (
@@ -334,7 +301,6 @@ const printContent = contentObjArr => {
   let toPrint = contentObjArr[0];
   if(contentObjArr.length > 1) {
     for (let index = 1; index < contentObjArr.length; index++) {
-     // console.log(contentObjArr[index]);
       toPrint = toPrint.concat(`; ${contentObjArr[index]}`);
     }
   } 

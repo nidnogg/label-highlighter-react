@@ -202,3 +202,8 @@ body {
   visibility: visible;
   opacity: 1;
 } 
+
+.no_highlighting {
+  user-select: none;
+}
+
