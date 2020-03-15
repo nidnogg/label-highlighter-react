@@ -11,7 +11,7 @@ const App = () => {
     return selectedText;
   }
 
-  const updateSelectedTextCallback = (labelName, newContent, replaceFlag) => {
+  const updateSelectedTextCallback = (labelName, newContent, newNode, replaceFlag) => {
     if(selectedText) {
       if(selectedText.has(labelName)) {
         if(!replaceFlag) {
@@ -19,21 +19,23 @@ const App = () => {
           updateSelectedText(selectedText.set(labelName, updatedContent));
           
           // clone
-          let updatedContentPosition = selectedText.get(labelName).concat([newContent]);
-          updateSelectedTextNode(selectedTextNode.set(labelName, updatedContentPosition));
+          let updatedContentNode = selectedTextNode.get(labelName).concat([newNode]);
+          updateSelectedTextNode(selectedTextNode.set(labelName, updatedContentNode));
         } else {
           updateSelectedText(selectedText.set(labelName, newContent));
-                    // clone
-
-          updateSelectedTextNode(selectedTextNode.set(labelName, newContent));
+          // clone
+          updateSelectedTextNode(selectedTextNode.set(labelName, newNode));
         }
       } else {
         updateSelectedText(selectedText.set(labelName, [newContent]));
-                  // clone
-
-        updateSelectedTextNode(selectedTextNode.set(labelName, [newContent]));
+        // clone
+        updateSelectedTextNode(selectedTextNode.set(labelName, [newNode]));
       }
     }
+  }
+
+  const selectedTextNodeCallback = labelName => {
+    return selectedTextNode;
   }
 
   const isSelectingCallback = () => {
@@ -55,6 +57,8 @@ const App = () => {
       <div className="main-content">
         <TextArea isSelecting={isSelectingCallback} toggleSelecting={toggleSelectingCallback} 
                   selectedText={selectedTextCallback} updateSelectedText={updateSelectedTextCallback}
+                  selectedTextNode={selectedTextNodeCallback}
+
         />
         <Labeller isSelecting={isSelectingCallback} toggleSelecting={toggleSelectingCallback} 
                   selectedText={selectedTextCallback} updateSelectedText={updateSelectedTextCallback}
@@ -106,12 +110,11 @@ const Labeller = props => {
 
   const deleteLabelHighlights = label => {
     if(props.selectedText()) {
-      props.updateSelectedText(label, [], true);
+      props.updateSelectedText(label, [], [], true);
       let spanNodes = document.getElementsByClassName(`${label} tooltip`);
       let spanTooltipNodes = document.getElementsByClassName(`${label} tooltiptext`);
       
       while (spanNodes.length > 0) {
-        console.log(`Deleting: spanNodes[0] = ${spanNodes[0]}`);
         if(spanTooltipNodes[0].parentNode) {
           spanTooltipNodes[0].parentNode.removeChild(spanTooltipNodes[0]);
           spanNodes[0].outerHTML = spanNodes[0].innerHTML;
@@ -179,13 +182,7 @@ const Labeller = props => {
 }
 
 const TextArea = props => {
-
-  const deleteSelectionStateText = (stringToDelete, label) => {
-    let modifiedContent = props.selectedText().get(label);
-    modifiedContent = modifiedContent.filter(item => item !== stringToDelete);
-    props.updateSelectedText(label, modifiedContent, true);
-  }
-
+  
   // Re-renders labeller component by toggling its state rapidly
   const flushLabeller = () => {
     props.toggleSelecting(null);
@@ -196,6 +193,15 @@ const TextArea = props => {
 
   let labelRefresh = props.isSelecting();
     
+  const deleteSelectionStateText = (stringToDelete, nodeToDelete, label) => {
+    let modifiedContent = props.selectedText().get(label);
+    modifiedContent = modifiedContent.filter(item => item !== stringToDelete);
+    
+    let modifiedContentNode = props.selectedTextNode().get(label);
+    modifiedContentNode = modifiedContentNode.filter(item => item !== nodeToDelete);
+    props.updateSelectedText(label, modifiedContent, modifiedContentNode, true);
+  }
+
   const deleteLabelNode = (node, label) => {
     for (let nodeChild of node.childNodes) {
       if(nodeChild.nodeType != Node.TEXT_NODE) {
@@ -203,7 +209,7 @@ const TextArea = props => {
         //console.log(`node to remove ${node}`);
         node.removeChild(nodeChild);
         node.outerHTML = node.innerHTML;
-        deleteSelectionStateText(node.innerText, label);
+        deleteSelectionStateText(node.innerText, node, label);
         flushLabeller();
       } 
     }
@@ -247,7 +253,6 @@ const TextArea = props => {
           for (let node of span.childNodes) {
             if(node.nodeType != Node.TEXT_NODE) {
               // Remove the actual child DOM node if it's not a text nnode
-              console.log(`node to remove ${node.childNodes.item(1)}`);
               deleteLabelNode(node, label);
             }
           }
@@ -256,16 +261,16 @@ const TextArea = props => {
           span.appendChild(spanTooltip);
 
           range.insertNode(span);
-          props.updateSelectedText(label, textHighlight, false);
+          props.updateSelectedText(label, textHighlight, span, false);
           props.toggleSelecting(null);
           clearSelection();
                    
-        } else { // Append a new selection to highlighted text
-          //span.appendChild(selectionContents);
+        } else { 
+          // Append a new selection to highlighted text
           span.appendChild(spanTooltip);
   
           range.insertNode(span);
-          props.updateSelectedText(label, textHighlight, false);
+          props.updateSelectedText(label, textHighlight, span, false);
           flushLabeller();
           
           clearSelection();
