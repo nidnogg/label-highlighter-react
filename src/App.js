@@ -162,7 +162,7 @@ const Labeller = props => {
   );
 
   useEffect(() => {
-    console.log(`${props.isSelecting()} is selecting!`);
+    //console.log(`${props.isSelecting()} is selecting!`);
   });
 
   return (
@@ -207,7 +207,33 @@ const TextArea = props => {
           }, 0.5);
   } 
 
-  //let labelRefreshTrigger = false;
+  function getNodesInRange(range) {
+    var start = range.startContainer;
+    var end = range.endContainer;
+    var commonAncestor = range.commonAncestorContainer;
+    var nodes = [];
+    var node;
+
+    // walk parent nodes from start to common ancestor
+    for (node = start.parentNode; node; node = node.parentNode)
+    {
+        nodes.push(node);
+        if (node == commonAncestor)
+            break;
+    }
+    nodes.reverse();
+
+    // walk children and siblings from start until end is found
+    for (node = start; node; node = getNextNode(node))
+    {
+        nodes.push(node);
+        if (node == end)
+            break;
+    }
+
+    return nodes;
+}
+
   let labelRefresh = props.isSelecting();
     
   const handleMouseUp = () => {
@@ -215,7 +241,7 @@ const TextArea = props => {
    
     if(label) {
       let textHighlight = window.getSelection().toString();
-      if(textHighlight.length < 2 || textHighlight == ' ') {
+      if(textHighlight.length < 1 || textHighlight == ' ') {
         console.log('Selected empty or insufficient text!');
       } else {
         let range = window.getSelection().getRangeAt(0);
@@ -227,45 +253,43 @@ const TextArea = props => {
         span.style.backgroundColor = "black";
 
         span.className = `${label} ${generateKey(label)} tooltip`;
+        span.appendChild(selectionContents);
+
         spanTooltip.className = `${label} tooltiptext`;
         spanTooltip.innerText = "Click to remove from label";
+
 
         span.onclick = () => {
           //span.outerHTML = span.innerHTML;
           span.removeChild(spanTooltip);
           span.outerHTML = span.innerHTML;
+          console.log(`working delete span inner html sent to deletion ${span.innerHTML}`  );
           deleteSelectionStateText(span.innerHTML, label);
           flushLabeller();
         }
     
-        // In the case of an overlap - check for child span nodes
-        if(span.childNodes.length > 0) {
-          console.log('overlapped! child nodes:');
-          console.log(span.childNodes);
-          while (span.childNodes.length > 0) {
-            console.log(`childNodes[0] = ${span.childNodes[0]}`);
-
-            // If it has a parent, it's a child span node already selected by the user
-            if(span.childNodes[0].parentNode) {
-              // Delete it from the virtual DOM state as it would be deleted on a click mouse event
-              deleteSelectionStateText(span.childNodes[0].innerHTML, label);
-
-              // Remove the actual child DOM node
-              span.childNodes[0].parentNode.removeChild([0]);
+        // In the case of an overlap - check for child span nodes (Non text nodes!)
+        if(span.children.length > 0) {
+          console.log('overlapped!');
+          for (let node of span.childNodes) {
+            if(node.nodeType != Node.TEXT_NODE) {
+              // Remove the actual child DOM node if it's not a text nnode
+              node.removeChild(node.childNodes.item(1));
+              node.outerHTML = node.innerHTML;
+              deleteSelectionStateText(node.innerText, label);
+              flushLabeller();
             }
           }
           
           // Append the broader selection to the highlights.
-          span.appendChild(selectionContents);
           span.appendChild(spanTooltip);
-          
+
           range.insertNode(span);
           props.updateSelectedText(label, textHighlight, false);
           props.toggleSelecting(null);
-          //return 1;
-                            
+                   
         } else { // Append a new selection to highlighted text
-          span.appendChild(selectionContents);
+          //span.appendChild(selectionContents);
           span.appendChild(spanTooltip);
   
           range.insertNode(span);
@@ -278,12 +302,6 @@ const TextArea = props => {
   
     //return 0;
   }
-
-
-
-  useEffect(() => {
-    
-  });
 
   return (
     <section className="textArea">
