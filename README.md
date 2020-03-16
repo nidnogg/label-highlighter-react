@@ -1,5 +1,7 @@
 # label-highlighter-react
 
+### [Live demo now available!](https://nidnogg.github.io/label-highlighter-react/)
+
 Text content generated through [TalkToTransformer](https://talktotransformer.com/)
 ## Usage
 
