@@ -4,6 +4,7 @@ import { generateKey } from './helpers.js';
 
 const TextArea = props => {
   
+  // These two states handle color assignments to each label
   const [labelColors, updateLabelColor] = useState(new Map());
   const [getColorFromPalette, updateColorPalette] = useState({palette: paletteArray, index: 0});
 
@@ -23,11 +24,11 @@ const TextArea = props => {
   const flushLabeller = () => {
     props.toggleSelecting(null);
           setTimeout(() => { 
-            props.toggleSelecting(labelRefresh);
+            props.toggleSelecting(previousLabel);
           }, 0.5);
   } 
 
-  let labelRefresh = props.isSelecting();
+  let previousLabel = props.isSelecting();
     
   const deleteSelectionStateText = (stringToDelete, nodeToDelete, label) => {
     let modifiedContent = props.selectedText().get(label);
@@ -50,6 +51,7 @@ const TextArea = props => {
     }
   }
 
+  // Clears mouse selection after highlighting
   const clearSelection = () => {
     if (window.getSelection) { window.getSelection().removeAllRanges(); }
     else if (document.selection) { document.selection.empty(); }
@@ -98,6 +100,7 @@ const TextArea = props => {
           range.insertNode(span);
           props.updateSelectedText(label, textHighlight, span, false);
           props.toggleSelecting(null);
+          flushLabeller();
           clearSelection();
                    
         } else { 
@@ -107,7 +110,6 @@ const TextArea = props => {
           range.insertNode(span);
           props.updateSelectedText(label, textHighlight, span, false);
           flushLabeller();
-          
           clearSelection();
         }
       }
@@ -116,38 +118,38 @@ const TextArea = props => {
 
   return (
     <section className="textArea">
-    <h2 className="no-highlighting">Sample Text</h2>
-      <p onMouseUp={handleMouseUp} className="text-content">
-        The bucket soaked in mineral water of Zöndgernopd 
-        Mixed with a dosage of Zöndgernopd prepared from their 
-        Sulfur by the latest chemical techniques. When mixed with 
-        several pounds of solvent, and operated over a long period 
-        of time,this mixture produces an almost homogenous mixture 
-        of some hundreds of poisons that are thought to have been 
-        left behind on the planet.
-      </p>
+      <h2 className="no-highlighting">Sample Text</h2>
+        <p onMouseUp={handleMouseUp} className="text-content">
+          The bucket soaked in mineral water of Zöndgernopd 
+          Mixed with a dosage of Zöndgernopd prepared from their 
+          Sulfur by the latest chemical techniques. When mixed with 
+          several pounds of solvent, and operated over a long period 
+          of time,this mixture produces an almost homogenous mixture 
+          of some hundreds of poisons that are thought to have been 
+          left behind on the planet.
+        </p>
 
-    <div className="user-help">
-      <h2 className="no-highlighting">Hover for instructions</h2>
-      <ol className="text-content user-help-content"> 
-        <li>
-          Click on Add Label to type in a label name, and then click the + button on the right to add that label
-        </li>
-        <li>
-          Select labels by clicking on their names.
-        </li>
-        <li>
-          Once created, the label is automatically selected, and you can click and drag over a piece of text to assign that selection to that label.
-        </li>
-        <li>
-          To remove a label, try clicking on a highlighted section.
-        </li>
-        <li>
-          Label contents can be edited!
-        </li>
-      </ol>
-  
-    </div>
+      <section className="user-help">
+        <h2 className="no-highlighting">Hover for instructions</h2>
+        <ol className="text-content user-help-content"> 
+          <li>
+            Click on Add Label to type in a label name, and then click the + button on the right to add that label
+          </li>
+          <li>
+            Select labels by clicking on their names.
+          </li>
+          <li>
+            Once created, the label is automatically selected, and you can click and drag over a piece of text to assign that selection to that label.
+          </li>
+          <li>
+            To remove a label, try clicking on a highlighted section.
+          </li>
+          <li>
+            Label contents can be edited!
+          </li>
+        </ol>
+    
+      </section>
     </section>
   );
 } 

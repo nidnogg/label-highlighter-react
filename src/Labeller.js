@@ -4,21 +4,28 @@ import './css/App.css';
 import { generateKey, printContent } from './helpers.js';
 
 const Labeller = props => {
+  // Contains references to all labels created by the user
   const [listLabels, setListLabels] = useState([]);
+
+  // For handling form inputs
   const [value, setValue] = useState(0);
 
-  const [fade, setFade] = useState(0); //0 is for fadeout, 1 is for fadeIn
+  //0 is for fadeout, 1 is for fadeIn
+  const [fade, setFade] = useState(0); 
+  
   const formResetRef = useRef(0);
 
   const handleSubmit = event => {
     event.preventDefault();
+    
+    // For fading label list items via CSSTransition and TransitionGroup
+    setFade(1);
 
     // Sanitizes user label name input
     if(value == '') {
       alert('Empty label detected!');
     }
     else if(!listLabels.includes(value)) {
-      setFade(1);
       setListLabels( listLabels.concat(value) );   
     }
     else {
@@ -63,9 +70,8 @@ const Labeller = props => {
     }
   }
 
-  
   const renderLabels = listLabels.map(label => 
-      <CSSTransition in={fade} timeout={50} classNames="fade-animations">
+      <CSSTransition in={fade} timeout={200} classNames="fade-animations">
         <li key={generateKey(label)} className={props.isSelecting() == label ? "label-entry label-text selected" : "label-entry"} >
           <div className="label-wrapper" onClick={() => {
                                           if(props.isSelecting() == label) {
@@ -82,13 +88,11 @@ const Labeller = props => {
       );
   
   const renderContent = listLabels.map(label => 
-    <CSSTransition in={fade} timeout={50} classNames="fade-animations">
       <li key={generateKey(label)} className="content-entry" >
         <span contentEditable="true">
           {props.selectedText().has(label) ? printContent(props.selectedText().get(label)) : ''}
         </span>
       </li>
-    </CSSTransition>
   );
 
   return (
@@ -112,9 +116,7 @@ const Labeller = props => {
       <h2 className="content-header">contents</h2>
         <ul>
           <li><br/></li>
-          <TransitionGroup> 
-            {renderContent}
-          </TransitionGroup>
+          {renderContent}
         </ul>
       </section>
     </section>

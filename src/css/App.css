@@ -1,8 +1,4 @@
-/* base color palette `
-#998F74 (Complementary tab from Adobe)
-*/
 :root {
-
   --bg-color: #FEF7D8;
   --bg-mid: #E6DFC3;
   --bg-dark-color: #E6DFC3;
@@ -10,19 +6,6 @@
   --placeholder-color: #3a4c43;
   --tooltip-bg: #7D7A6A;  
   --button-focus: #998F74;
-
-  /*
-  --bg-color: #a4c3b2;
-  --bg-mid: #cce3de;
-  --bg-dark-color: #6b9080;
-  --text-color: #f6fff8; 
-  --tooltip-bg: #73857b;
-  previous attempts
-  --bg-color: #6b9080;
-  --bg-mid: #cce3de;
-  --bg-dark-color: #a4c3b2;
-  --text-color:#54646E; #98ACAE #f6fff8; previously #FFFFF9
-  */
 }
 
 * {
@@ -218,7 +201,6 @@ body {
   right: 0;
   min-height: 20px;
   min-width: 20px;
-  /*todo*/
 }
 
 .label-entry {
@@ -303,8 +285,6 @@ body {
   top: 0;
   left: 0;
   margin-right: 20px;
-  /*margin-right: 2.5vw;*/
-  /*padding: 10px; previous*/
   padding: 2vw 20px;
   width: 30vw;
   background-color: var(--bg-dark-color);
@@ -329,7 +309,6 @@ body {
  .tooltip {
   position: relative;
   cursor: pointer;
-  /*display: inline-block;*/
 }
 
 /* Tooltip text */
@@ -388,8 +367,6 @@ body {
   width: 30vw;
   height: 250px;
   transition: 0.3s;
-  /*background-color: var(--tooltip-bg);*/
-  /*color: #FFFFF9;*/
 }
 
 .user-help:hover {
@@ -401,7 +378,14 @@ ol > li {
   list-style-type: circle;  
   font-size: 0.9em;
 }
+
 @media (max-width: 1000px) {
+  .user-help {
+    display: none;
+  }
+}
+
+@media (max-height: 560px) {
   .user-help {
     display: none;
   }
