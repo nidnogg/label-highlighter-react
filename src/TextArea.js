@@ -116,7 +116,7 @@ const TextArea = props => {
 
   return (
     <section className="textArea">
-      <h2 className="no-highlighting">Sample Text</h2>
+    <h2 className="no-highlighting">Sample Text</h2>
       <p onMouseUp={handleMouseUp} className="text-content">
         The bucket soaked in mineral water of Zöndgernopd 
         Mixed with a dosage of Zöndgernopd prepared from their 
@@ -126,7 +126,30 @@ const TextArea = props => {
         of some hundreds of poisons that are thought to have been 
         left behind on the planet.
       </p>
-      
+
+    <div className="user-help">
+      <h2 className="no-highlighting">Hover for instructions</h2>
+      <p className="text-content user-help-content">
+        <ol> 
+          <li>
+            Click on Add Label to type in a label name, and then click the + button on the right to add that label
+          </li>
+          <li>
+            Select labels by clicking on their names.
+          </li>
+          <li>
+            Once created, the label is automatically selected, and you can click and drag over a piece of text to assign that selection to that label.
+          </li>
+          <li>
+            To remove a label, try clicking on a highlighted section.
+          </li>
+          <li>
+            Label contents can be edited!
+          </li>
+        </ol>
+
+      </p>
+    </div>
     </section>
   );
 } 

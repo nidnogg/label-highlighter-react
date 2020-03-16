@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+//import { CSSTransition } from 'react-transition-group';
 import './css/App.css';
 import { generateKey, printContent } from './helpers.js';
 
@@ -60,7 +61,8 @@ const Labeller = props => {
     }
   }
 
-  const renderLabels = listLabels.map((label) => 
+  
+  const renderLabels = listLabels.map(label => 
       <li key={generateKey(label)} className={props.isSelecting() == label ? "label-entry label-text selected" : "label-entry"} >
         <div className="label-wrapper" onClick={() => {
                                         if(props.isSelecting() == label) {
