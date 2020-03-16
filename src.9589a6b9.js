@@ -71,4 +71,4 @@ var r,e;module.exports=require("./factoryWithThrowingShims")();
 },{"react":"n8MK","gsap":"TpQl","./Labeller.js":"kCZa","./TextArea.js":"JqoT","./css/App.css":"ssWU"}],"uBxZ":[function(require,module,exports) {
 "use strict";var e=u(require("react")),r=u(require("react-dom")),t=u(require("./App"));function u(e){return e&&e.__esModule?e:{default:e}}var a=document.getElementById("root");r.default.render(e.default.createElement(t.default,null),a);
 },{"react":"n8MK","react-dom":"NKHc","./App":"eBcb"}]},{},["uBxZ"], null)
-//# sourceMappingURL=/src.9589a6b9.js.map
+//# sourceMappingURL=/label-highlighter-react/src.9589a6b9.js.map
