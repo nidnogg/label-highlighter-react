@@ -129,26 +129,24 @@ const TextArea = props => {
 
     <div className="user-help">
       <h2 className="no-highlighting">Hover for instructions</h2>
-      <p className="text-content user-help-content">
-        <ol> 
-          <li>
-            Click on Add Label to type in a label name, and then click the + button on the right to add that label
-          </li>
-          <li>
-            Select labels by clicking on their names.
-          </li>
-          <li>
-            Once created, the label is automatically selected, and you can click and drag over a piece of text to assign that selection to that label.
-          </li>
-          <li>
-            To remove a label, try clicking on a highlighted section.
-          </li>
-          <li>
-            Label contents can be edited!
-          </li>
-        </ol>
-
-      </p>
+      <ol className="text-content user-help-content"> 
+        <li>
+          Click on Add Label to type in a label name, and then click the + button on the right to add that label
+        </li>
+        <li>
+          Select labels by clicking on their names.
+        </li>
+        <li>
+          Once created, the label is automatically selected, and you can click and drag over a piece of text to assign that selection to that label.
+        </li>
+        <li>
+          To remove a label, try clicking on a highlighted section.
+        </li>
+        <li>
+          Label contents can be edited!
+        </li>
+      </ol>
+  
     </div>
     </section>
   );

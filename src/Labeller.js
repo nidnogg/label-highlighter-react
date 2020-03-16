@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-//import { CSSTransition } from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './css/App.css';
 import { generateKey, printContent } from './helpers.js';
 
@@ -7,6 +7,7 @@ const Labeller = props => {
   const [listLabels, setListLabels] = useState([]);
   const [value, setValue] = useState(0);
 
+  const [fade, setFade] = useState(0); //0 is for fadeout, 1 is for fadeIn
   const formResetRef = useRef(0);
 
   const handleSubmit = event => {
@@ -17,6 +18,7 @@ const Labeller = props => {
       alert('Empty label detected!');
     }
     else if(!listLabels.includes(value)) {
+      setFade(1);
       setListLabels( listLabels.concat(value) );   
     }
     else {
@@ -63,26 +65,30 @@ const Labeller = props => {
 
   
   const renderLabels = listLabels.map(label => 
-      <li key={generateKey(label)} className={props.isSelecting() == label ? "label-entry label-text selected" : "label-entry"} >
-        <div className="label-wrapper" onClick={() => {
-                                        if(props.isSelecting() == label) {
-                                          props.toggleSelecting(null);
-                                        } else {
-                                          props.toggleSelecting(label);
-                                        }
-                                       }}>
-          {label + ':'}
-        </div>
-        <button className="delete-button" onClick={ event => { event.preventDefault(); handleDeletion(label) } }>x</button>
-      </li>
+      <CSSTransition in={fade} timeout={50} classNames="fade-animations">
+        <li key={generateKey(label)} className={props.isSelecting() == label ? "label-entry label-text selected" : "label-entry"} >
+          <div className="label-wrapper" onClick={() => {
+                                          if(props.isSelecting() == label) {
+                                            props.toggleSelecting(null);
+                                          } else {
+                                            props.toggleSelecting(label);
+                                          }
+                                          }}>
+            {label + ':'}
+          </div>
+          <button className="delete-button" onClick={ event => { event.preventDefault(); setFade(0); handleDeletion(label); } }>x</button>
+        </li>
+      </CSSTransition>
       );
   
   const renderContent = listLabels.map(label => 
-    <li key={generateKey(label)} className="content-entry" >
-      <span contentEditable="true">
-        {props.selectedText().has(label) ? printContent(props.selectedText().get(label)) : ''}
-      </span>
-    </li>
+    <CSSTransition in={fade} timeout={50} classNames="fade-animations">
+      <li key={generateKey(label)} className="content-entry" >
+        <span contentEditable="true">
+          {props.selectedText().has(label) ? printContent(props.selectedText().get(label)) : ''}
+        </span>
+      </li>
+    </CSSTransition>
   );
 
   return (
@@ -95,7 +101,9 @@ const Labeller = props => {
                 <input className="initial-input" name="addButton" type="text" placeholder="Add new Label" onChange={handleChange}/>
                 <button className="add-button" type="submit">+</button>
               </li>
-              {renderLabels}
+              <TransitionGroup> 
+                {renderLabels}
+              </TransitionGroup>
           </ul>        
         </form>
       </section>
@@ -104,7 +112,9 @@ const Labeller = props => {
       <h2 className="content-header">contents</h2>
         <ul>
           <li><br/></li>
-          {renderContent}
+          <TransitionGroup> 
+            {renderContent}
+          </TransitionGroup>
         </ul>
       </section>
     </section>

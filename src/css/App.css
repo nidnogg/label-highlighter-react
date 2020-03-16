@@ -229,7 +229,6 @@ body {
   height: 100%;
   white-space: nowrap;
   transition: 0.3s;
-
 }
 
 .label-wrapper {
@@ -278,6 +277,21 @@ body {
 
 .selected {
   background-color: var(--tooltip-bg);
+}
+
+.fade-animations-enter {
+  opacity: 0;
+}
+.fade-animations-enter-active {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+.fade-animations-exit {
+  opacity: 1;
+}
+.fade-animations-exit-active {
+  opacity: 0;
+  transition: opacity 200ms;
 }
 
 
@@ -385,6 +399,7 @@ body {
 
 ol > li {
   list-style-type: circle;  
+  font-size: 0.9em;
 }
 @media (max-width: 1000px) {
   .user-help {
