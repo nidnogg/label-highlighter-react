@@ -62,7 +62,29 @@ li {
 }
 
 button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
   font: inherit;
+  appearance: none;
+  border: 0;
+  border-radius: 5px 0 0 5px;
+  background-color: transparent;
+  padding: 4px 12px;
+  /*
+  padding: 4px 6px 4px 0;
+  */
+  /*width: 4px;*/
+  height: 33px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: var(--bg-dark-color);
+}
+
+button:focus {
+  background-color: var(--button-focus);
 }
 
 input::placeholder {
@@ -77,6 +99,12 @@ input:focus::placeholder {
 
 input:focus, textarea:focus, select:focus {
   outline: none;
+}
+
+@media (max-width: 644px) {
+  input::placeholder {
+    color: transparent;
+  }  
 }
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -110,31 +138,65 @@ body {
   position: absolute;
   display: block;
   top: -20px;
-  left: 10vw;
+  left: 2vw;
   clear: both;
   font-size: 2rem;
 }
 
+@media (max-width: 1000px) {
+  .main-header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    top: -20px;
+    left: 0;
+    margin: auto;
+    clear: both;
+    font-size: 2rem;
+  }
+  
+}
+
 .main-content {
   position: absolute;
-  display: inline-flex;
-  justify-content: center;
-  flex-wrap: nowrap;
+  text-align: justify;
+  vertical-align: top;
   top: 2em;
-  padding: 5px;
-  width: 70vw
+  padding: 0px 2vw;
+  height: 100vh;
+  width: 100%;
+}
+
+.main-content > section {
+  display: inline-block;
+}
+
+@media (max-width: 1000px) {
+  .main-content > section {
+    display: block;
+  }
 }
 
 /* Labeller styles */
 
 .labeller {
   position: relative;
-  display: inline-flex;
-  align-self: stretch;
-  margin-left: 2.5vw;
+  right: -43px;
   padding: 2vw 20px;
   min-width: 60vw;
+  height: 100%;
   background-color: var(--bg-dark-color);
+}
+
+@media (max-width: 1000px) {
+  .labeller {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    top: 30px;
+    right: 0;
+
+  }
 }
 
 .label-table {
@@ -148,7 +210,7 @@ body {
   font-size: 0.8em;
   background-color: var(--bg-color);
   border: none;
-  min-height: 25px;
+  height: 33px;
 }
 
 .add-button {
@@ -171,13 +233,10 @@ body {
 }
 
 .label-wrapper {
-  /*position: absolute;
-  height: 0;
-  */
   height: 33px;
   padding-top: 4%;
+  padding-left: 7px;
   font-size: 0.9em;
-  pointer-events: auto;
   cursor: pointer;
   transition: 0.3s;
 }
@@ -192,12 +251,7 @@ body {
 
 
 .delete-button {
-  position: absolute;
-  /*margin-left: 79%;*/
-  right: 0;
-  bottom: 0;
-  min-height: 20px;
-  min-width: 20px;
+  font-size: 0.9em;
 }
 
 .content-header {
@@ -213,14 +267,13 @@ body {
 .content-entry {
   font-size: 0.8rem;
   width: 100%;
-  /*height: 24px;*/
   height: 33px;
 
 }
 
 .content-entry > span {
   position: absolute;
-  padding-top: 2px;
+  padding-top: 6px;
 }
 
 .selected {
@@ -231,13 +284,25 @@ body {
 /* textArea styles */
 
 .textArea {
-  /*position: relative;
-  left: 0;*/
-  margin-right: 2.5vw;
+  position: relative;
+  vertical-align: top;
+  top: 0;
+  left: 0;
+  margin-right: 20px;
+  /*margin-right: 2.5vw;*/
   /*padding: 10px; previous*/
   padding: 2vw 20px;
-  min-width: 30vw;
+  width: 30vw;
   background-color: var(--bg-dark-color);
+}
+
+@media (max-width: 1000px) {
+  .textArea {
+    display: flex;
+    justify-content: center;
+    min-width: 85vw;
+    left: 5%;
+  }
 }
 
 /* Tooltip container, so as to not warp text on highlight */
