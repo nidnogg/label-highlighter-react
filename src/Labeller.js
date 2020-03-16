@@ -62,7 +62,7 @@ const Labeller = props => {
   }
 
   const renderLabels = listLabels.map((label) => 
-      <li key={generateKey(label)} className={props.isSelecting() == label ? "label-entry selected" : "label-entry"} >
+      <li key={generateKey(label)} className={props.isSelecting() == label ? "label-entry label-text selected" : "label-entry label-text"} >
         {label + ':'}
         <button className="delete-button" onClick={ event => { event.preventDefault(); handleDeletion(label) } }>x</button>
       </li>
@@ -80,21 +80,11 @@ const Labeller = props => {
         } else {
           props.toggleSelecting(label);
         }
-        /*
-        if(!props.isSelecting() || props.isSelecting() === label) {
-          props.toggleSelecting(label);
-        } else {
-          props.toggleSelecting(null);
-        }*/
       }}>
       select
       </button>
     </li>
   );
-
-  useEffect(() => {
-    console.log(`${props.isSelecting()} is selecting!`);
-  });
 
   return (
     <section className="labeller">

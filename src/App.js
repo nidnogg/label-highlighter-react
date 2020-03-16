@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Labeller from './Labeller.js';
 import TextArea from './TextArea.js';
 import './css/App.css';
-import { generateKey } from './helpers.js';
-
 
 const App = () => {
   const [selectedText, updateSelectedText] = useState(new Map());

@@ -1,6 +1,28 @@
 /* base color palette `
 #998F74 (Complementary tab from Adobe)
 */
+:root {
+
+  --bg-color: #FEF7D8;
+  --bg-mid: #E6DFC3;
+  --bg-dark-color: #E6DFC3;
+  --text-color: #202a25; 
+  --placeholder-color: #3a4c43;
+  --tooltip-bg: #7D7A6A;
+
+  /*
+  --bg-color: #a4c3b2;
+  --bg-mid: #cce3de;
+  --bg-dark-color: #6b9080;
+  --text-color: #f6fff8; 
+  --tooltip-bg: #73857b;
+  previous attempts
+  --bg-color: #6b9080;
+  --bg-mid: #cce3de;
+  --bg-dark-color: #a4c3b2;
+  --text-color:#54646E; #98ACAE #f6fff8; previously #FFFFF9
+  */
+}
 
 * {
   box-sizing: border-box;
@@ -32,7 +54,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 p {
-  font-size: 0.8em;
+  font-size: 0.9em;
 }
 li {
   list-style: none;
@@ -41,9 +63,32 @@ li {
 button {
   font: inherit;
 }
+
+input::placeholder {
+  padding-left: 4px;
+  transition: 0.32222s;
+  font-size: 1em;
+}
+input:focus::placeholder {
+  color: transparent;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--placeholder-color);
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: var(--placeholder-color);
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: var(--placeholder-color);
+}
+
 body {
-  color: #FFFFF9;
-  background-color: #998F74;
+  color: var(--text-color);
+  background-color: var(--bg-color);
   font-family: 'Oxanium', cursive;
 }
 
@@ -79,16 +124,14 @@ body {
 .labeller {
   position: relative;
   display: inline-flex;
-  padding-left: 30vw;
   margin-left: 5vw;
-  padding: 10px;
+  padding: 2vw 20px;
   min-width: 60vw;
-  background-color: #4D432B;
+  background-color: var(--bg-dark-color);
 }
 
 .label-table {
   position: absolute;
-  top: 32px;
   width: 20%;
 }
 
@@ -96,7 +139,7 @@ body {
   width: 80%;
   font: inherit;
   font-size: 0.8em;
-  background-color: #78705B;
+  background-color: var(--bg-color);
   border: none;
   min-height: 25px;
 }
@@ -110,15 +153,20 @@ body {
 }
 
 .label-entry {
-  background-color: #78705B;
-  color: #FFFFF9;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   width: 100%;
+  white-space: nowrap;
+}
+
+.label-text {
+  font-size: 0.9em;
 }
 
 
 .delete-button {
   position: relative;
-  left: 80%;
+  margin-left: 79%;
   bottom: 0;
   min-height: 20px;
   min-width: 20px;
@@ -130,30 +178,23 @@ body {
 
 .content-table {
   position: absolute;
-  top: 32px;
   left: 30%;
   width: 70%;
 }
 
 .content-entry {
+  font-size: 0.8rem;
   width: 100%;
 }
 
 .selected {
-  background-color: black;
+  background-color: var(--tooltip-bg);
 }
 
-::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: #4D432B;
-  opacity: 1; /* Firefox */
-}
-
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
-  color: #4D432B;
-}
-
-::-ms-input-placeholder { /* Microsoft Edge */
-  color: #4D432B;
+.selected::after {
+  width:100%;
+  height: 100%;
+  background-color: var(--tooltip-bg);
 }
 
 /* textArea styles */
@@ -161,11 +202,11 @@ body {
 .textArea {
   /*position: relative;
   left: 0;*/
-  padding-right: 30vw;
   margin-right: 5vw;
-  padding: 10px;
+  /*padding: 10px; previous*/
+  padding: 2vw 20px;
   min-width: 30vw;
-  background-color: #4D432B;
+  background-color: var(--bg-dark-color);
 }
 
 /* Tooltip container, so as to not warp text on highlight */
@@ -184,8 +225,8 @@ body {
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 120px;
-  background-color: #555;
-  color: #fff;
+  background-color: var(--tooltip-bg);
+  color: var(--text-color);
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
@@ -220,7 +261,7 @@ body {
   opacity: 1;
 } 
 
-.no_high9lighting {
+.no-highlighting {
   user-select: none;
 }
 
