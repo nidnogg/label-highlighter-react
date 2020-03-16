@@ -6,7 +6,6 @@ import './css/App.css';
 const App = () => {
   const [selectedText, updateSelectedText] = useState(new Map());
   const [selectedTextNode, updateSelectedTextNode] = useState(new Map());
-
   const [isSelecting, toggleSelecting] = useState(null);
 
   const selectedTextCallback = labelName => {

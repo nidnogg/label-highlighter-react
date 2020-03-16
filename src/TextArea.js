@@ -42,7 +42,6 @@ const TextArea = props => {
     for (let nodeChild of node.childNodes) {
       if(nodeChild.nodeType != Node.TEXT_NODE) {
         // Remove the actual child DOM node if it's not a text node
-        //console.log(`node to remove ${node}`);
         node.removeChild(nodeChild);
         node.outerHTML = node.innerHTML;
         deleteSelectionStateText(node.innerText, node, label);

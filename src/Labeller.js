@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import './css/App.css';
 import { generateKey, printContent } from './helpers.js';
 
-
 const Labeller = props => {
   const [listLabels, setListLabels] = useState([]);
   const [value, setValue] = useState(0);
@@ -62,27 +61,25 @@ const Labeller = props => {
   }
 
   const renderLabels = listLabels.map((label) => 
-      <li key={generateKey(label)} className={props.isSelecting() == label ? "label-entry label-text selected" : "label-entry label-text"} >
-        {label + ':'}
+      <li key={generateKey(label)} className={props.isSelecting() == label ? "label-entry label-text selected" : "label-entry"} >
+        <div className="label-wrapper" onClick={() => {
+                                        if(props.isSelecting() == label) {
+                                          props.toggleSelecting(null);
+                                        } else {
+                                          props.toggleSelecting(label);
+                                        }
+                                       }}>
+          {label + ':'}
+        </div>
         <button className="delete-button" onClick={ event => { event.preventDefault(); handleDeletion(label) } }>x</button>
       </li>
       );
   
   const renderContent = listLabels.map(label => 
     <li key={generateKey(label)} className="content-entry" >
-      {/*<span contentEditable="true">*/}
-      <span>
-        {props.selectedText().has(label) ? printContent(props.selectedText().get(label)) : 'Select a phrase or word from the left-most area'}
+      <span contentEditable="true">
+        {props.selectedText().has(label) ? printContent(props.selectedText().get(label)) : ''}
       </span>
-      <button onClick={() => {
-        if(props.isSelecting() == label) {
-          props.toggleSelecting(null);
-        } else {
-          props.toggleSelecting(label);
-        }
-      }}>
-      select
-      </button>
     </li>
   );
 
